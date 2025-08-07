@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/layout1}"> <!--물결은 templates 폴더기준 경로. 이 템플릿이 사용할 부모 레이아웃 지정-->
+
+    <!-- 부모 레이아웃(layout1.html)의 <div layout:fragment="content"> 영역에 치환.-->
+    <div layout:fragment="content">
+        본문 영역입니다.
+    </div>
+
+    <th:block layout:fragment="css">
+
+    <style>
+    </style>
+    </th:block>
+
+    <th:block layout:fragment="script">
+        <script>
+            console.log("페이지 전용 스크립트");
+        </script>
+    </th:block>
+
+</html>

@@ -2,7 +2,7 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>부모 레이아웃</title>
+    <title>shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link th:href="@{/css/layout1.css}" rel="stylesheet">
 
@@ -12,20 +12,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
     <script>
-        /* 공통 스크립트 */
         console.log("공통 스크립트");
     </script>
 
 </head>
 <body>
     <!--header-->
-    <div th:replace="fragments/header::header"></div>
+    <div th:replace="~{fragments/header::header}"></div>
 
     <!--contents-->
-    <divㄷ layout:fragment="content" class="content"></divㄷ>
+    <div layout:fragment="content" class="content"></div>
 
     <!--footer-->
-    <div th:replace="fragments/footer::footer"></div>
+    <div th:replace="~{fragments/footer::footer}"></div>
     <th:block layout:fragment="script"></th:block>
 </body>
 </html>

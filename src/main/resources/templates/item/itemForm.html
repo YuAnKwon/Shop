@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<th:block layout:fragment="css">
+    <style>
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <h1>상품 등록 페이지입니다.</h1>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        console.log("페이지 전용 스크립트");
+    </script>
+</th:block>
+
+</html>

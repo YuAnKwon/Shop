@@ -1,9 +1,11 @@
 package com.shop.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +22,7 @@ public class SecurityConfig {
 
         // 로그인 설정.
         http.formLogin((it)-> it
-                .loginPage("/members/login") //로그인안한 유저가 로그인이 필요한 페이지를 볼때, 로그인하라고 안내할 페이지
+                .loginPage("/members/login") // 인증 필요시 리다이렉트(302)할 페이지 //API에서는 302보다 401을 줘야 프론트에서 “아, 인증 만료네”라고 처리 가능.
                 .defaultSuccessUrl("/") //로그인에 성공했을때, 메인페이지로 보낸다.
                 .usernameParameter("email") //로그인 시 사용할 파라미터 이름으로 email을 지정. (username -> email)
                 .failureUrl("/members/login/error") // 로그인 실패시 이동할 url
@@ -32,10 +34,32 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/") // 로그아웃 성공시 이동할 url
         );
 
-        // CSRF(Cross-Site Request Forgery) 보호 기능을 끄는 설정
-        // http.csrf(AbstractHttpConfigurer::disable);
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/","/members/**","/item/**","/images/**").permitAll() //permitAll을 통해 모든 사용자가 인증(로그인)없이 해당 경로에 접근 가능.
+                .requestMatchers("/admin/**").hasRole("ADMIN") //admin으로 시작하는 경로는 admin role일 경우에만 접근 가능하도록.
+                .anyRequest().authenticated() // 위에서 설정해준 경로를 제외한 나머지 경로는 모두 인증을 요구하도록.
+        );
+
+        // authenticationEntryPoint 등록하는 과정.
+        http.exceptionHandling(e -> e
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(new CustomAccessDeniedHandler())
+        );
+
+
+
+        /* CSRF(Cross-Site Request Forgery) 보호 기능을 끄는 설정
+         http.csrf(AbstractHttpConfigurer::disable); */
         return http.build(); // 위에서 설정한 내용을 바탕으로 SecurityFilterChain 객체를 생성하여 반환.
     }
+
+    //화면을 정상적으로 그리는데 필요한 정적인 자원들을 허용. 특별히 보안적인 고려사항이 없는 웹 전용 자원들
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()); //static 디렉터리의 하위 파일은 인증을 무시하도록.
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){

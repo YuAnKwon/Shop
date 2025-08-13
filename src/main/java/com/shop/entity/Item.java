@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class Item {
+public class Item extends BaseEntity{
     @Id //기본키
     @Column(name = "item_id") // 컬럼명을 안쓰면 필드명과 똑같이 생성.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +34,4 @@ public class Item {
 
     @Enumerated(EnumType.STRING) // 문자열로 저장.
     private ItemSellStatus itemSellStatus; // 상품 판매 상태
-    
-    private LocalDateTime regTime; // 상품 등록 시간
-    private LocalDateTime updateTime;; // 상품 수정 시간
-    
 }

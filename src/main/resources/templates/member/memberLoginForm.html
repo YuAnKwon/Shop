@@ -27,8 +27,8 @@
             <p th:if="${loginErrorMsg}" th:text="${loginErrorMsg}" class="error"></p>
 
             <div style="text-align: center">
-                <button class="btn btn-secondary">로그인</button> <!--type default가 submit (폼 데이터 전송)-->
-                <button type="button" class="btn btn-secondary" onclick="location.href='/members/new'">회원가입</button> <!--폼 전송 없이 다른 동작하려고 button-->
+                <button class="btn btn-outline-secondary">로그인</button> <!--type default가 submit (폼 데이터 전송)-->
+                <button type="button" class="btn btn-outline-secondary" onclick="location.href='/members/new'">회원가입</button> <!--폼 전송 없이 다른 동작하려고 button-->
             </div>
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         </form>

@@ -2,11 +2,16 @@ package com.shop.controller;
 
 import com.shop.dto.ItemDto;
 import com.shop.dto.ItemFormDto;
+import com.shop.dto.ItemSearchDto;
+import com.shop.entity.Item;
 import com.shop.service.ItemService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -87,6 +93,32 @@ public class ItemController {
             return "item/itemForm";
         }
         return "redirect:/"; //메인 페이지(/)로 이동 & 중복 요청 방지
+    }
+
+    @GetMapping(value = {"/admin/items", "/admin/items/{page}"})
+    public String itemManage(ItemSearchDto itemSearchDto,
+                             @PathVariable Optional<Integer> page,
+                             Model model){
+        //1. 조회하고자 하는 페이지의 정보를 담은 Pageable 생성.
+        // PageRequest.of(page, size, sort) == (offset, limit, sort).
+        // page,offset : n부터 시작
+        // size,limit : 한페이지당 개수
+        // sort : 정렬 정보 ex) Sort.by("id").descending()
+
+
+        // "/admin/items/3"이면 3번 페이지 조회
+        // "/admin/items" 이면 0번 페이지 조회
+        Pageable pageable = PageRequest.of(page.orElse(0),3); //null이면 0 아니면 page
+
+        // 2. itemService에 넘기기
+        Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable);
+
+        // 3. 필요한 데이터를 Model에 담아서 뷰 이름 반환.
+        model.addAttribute("items",items);
+        model.addAttribute("itemSearchDto", itemSearchDto);
+        model.addAttribute("maxPage",5);
+
+        return "item/itemMng";
     }
 
 }

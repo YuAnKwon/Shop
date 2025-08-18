@@ -2,8 +2,10 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 
-    <div layout:fragment="content">
-        <h1>메인페이지입니다.</h1>
+    <div layout:fragment="content" style="text-align: center">
+        <h1>Main Page</h1>
+        <br>
+        <img th:src="'/images/item/'+${imgPath}">
     </div>
 
     <th:block layout:fragment="css">

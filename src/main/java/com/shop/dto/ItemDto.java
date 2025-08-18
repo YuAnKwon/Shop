@@ -1,6 +1,5 @@
 package com.shop.dto;
 
-import com.shop.constant.ItemSellStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,7 @@ public class ItemDto {
 
     private String itemDetail;
 
-    private String sellStatCd;
+    private String sellStated;
 
     private LocalDateTime regTime; // 상품 등록 시간
 

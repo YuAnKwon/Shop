@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class ItemFormDto {
     private Long id;
 
@@ -26,17 +28,20 @@ public class ItemFormDto {
     private String itemDetail;
 
     @NotNull(message = "재고는 필수 입력 값입니다.")
-    private String stockNumber;
+    private Integer stockNumber;
     private ItemSellStatus itemSellStatus;
     private List<ItemImgDto> itemImgDtoList = new ArrayList<>();
 
+    private List<Long> itemImgIds = new ArrayList<>();
+
     // Entity -> Dto
     private static ModelMapper modelMapper = new ModelMapper();
-    public static ItemImgDto of(Item item){
-        return modelMapper.map(item, ItemImgDto.class);
+    public static ItemFormDto of(Item item){
+        return modelMapper.map(item, ItemFormDto.class);
     }
 
-    public Item createIem(){
+    // Dto -> Entity
+    public Item createItem(){
         return modelMapper.map(this,Item.class);
     }
 }

@@ -15,11 +15,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OrderSevice {
     private final OrderRepository orderRepository;
@@ -48,6 +50,23 @@ public class OrderSevice {
 
         return order.getId();
     }
+
+    // 장바구니 orders
+    public Long orders(List<OrderDto> orderDtoList, String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<OrderItem> orderItemList = new ArrayList<>();
+
+        for(OrderDto orderDto : orderDtoList){
+            Item item = itemRepository.findById(orderDto.getItemId())
+                    .orElseThrow(EntityNotFoundException::new);
+            OrderItem orderItem = OrderItem.createOrderItem(item, orderDto.getCount());
+            orderItemList.add(orderItem);
+        }
+        Order order = Order.createOrder(member, orderItemList);
+        orderRepository.save(order);
+        return order.getId();
+    }
+
 
     //특정 회원의 주문 내역을 조회하고, 주문별 상세 상품 정보를 대표 이미지 포함하여 OrderHistDto로 변환서 페이징 처리된 결과를 반환한다.
     @Transactional(readOnly = true)
@@ -86,5 +105,18 @@ public class OrderSevice {
 
         // 페이징 처리된 주문 DTO 리스트를 반환
         return new PageImpl<OrderHistDto>(orderHistDtos, pageable, totalCount);
+    }
+
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
+        order.cancelOrder();
+    }
+
+    public boolean validateOrder(Long orderId, String email) {
+        //orderId로 조회된 Order 엔티티의 member.email == email ?
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
+        return StringUtils.equals(email, order.getMember().getEmail());
     }
 }

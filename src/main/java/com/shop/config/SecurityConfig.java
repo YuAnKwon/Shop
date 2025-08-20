@@ -21,15 +21,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         // 로그인 설정.
-        http.formLogin((it)-> it
+        http.formLogin(it-> it
                 .loginPage("/members/login") // 인증 필요시 리다이렉트(302)할 페이지 //API에서는 302보다 401을 줘야 프론트에서 “아, 인증 만료네”라고 처리 가능.
+                .loginProcessingUrl("/members/login")
                 .defaultSuccessUrl("/") //로그인에 성공했을때, 메인페이지로 보낸다.
                 .usernameParameter("email") //로그인 시 사용할 파라미터 이름으로 email을 지정. (username -> email)
                 .failureUrl("/members/login/error") // 로그인 실패시 이동할 url
         );
 
         // 로그아웃 설정.
-        http.logout((it)->it
+        http.logout(it->it
                 .logoutUrl("/members/logout") //로그아웃 url
                 .logoutSuccessUrl("/") // 로그아웃 성공시 이동할 url
         );

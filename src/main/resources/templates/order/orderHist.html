@@ -52,7 +52,7 @@
                     </button>
                 </th:block>
                 <th:block th:unless="${order.orderStatus == T(com.shop.constant.OrderStatus).ORDER}">
-                    <h4>(취소 완료)</h4>
+                    <h4>(취소완료)</h4>
                 </th:block>
             </div>
         </div>
@@ -93,7 +93,42 @@
 </div>
 <th:block layout:fragment="script">
     <script>
-        console.log("페이지 전용 스크립트");
+        function cancelOrder(orderBtn) {
+            var orderId = orderBtn.value;
+
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            var url = "/order/" + orderId + "/cancel";
+            var paramData = {
+                orderId: orderId,
+            };
+            var param = JSON.stringify(paramData);
+
+            $.ajax({
+                url: "/order/" + orderId + "/cancel",
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+
+                dataType: "json",
+                cache: false,
+                success: function (result, status) {
+                    alert("주문이 취소 되었습니다.");
+                    $(orderBtn).parent().html("<h4>(취소완료)</h4>")
+                },
+
+                error: function (jqXHR, status, error) {
+                    if (jqXHR.status == '401') {
+                        alert('로그인 후 이용해주세요');
+                        location.href = '/members/login';
+                    } else {
+                        alert(jqXHR.responseText);
+                    }
+                }
+            });
+        }
     </script>
 </th:block>
 

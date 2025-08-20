@@ -121,4 +121,12 @@ public class ItemController {
         return "item/itemMng";
     }
 
+    // 상품상세페이지
+    @GetMapping("/item/{itemId}")
+    public String itemDetail(@PathVariable Long itemId, Model model){
+        ItemFormDto itemFormDto = itemService.getItemDtl(itemId);
+        model.addAttribute("item", itemFormDto);
+        return "item/itemDtl";
+    }
+
 }

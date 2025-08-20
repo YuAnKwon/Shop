@@ -20,5 +20,17 @@ body {
 }
 
 .content {
-    margin: 50px 200px 100px; /* 위 50px, 좌우 200px, 아래 100px */
+    margin: 50px auto 100px; /* 위 50px, 좌우 200px, 아래 100px */
+    max-width: 1200px;
+}
+
+@keyframes blink {
+    0%   { background-color: #dc3545; }  /* Bootstrap bg-danger 기본색 */
+    50%  { background-color: #f27b92; }  /* 조금 밝게 */
+    100% { background-color: #dc3545; }
+}
+
+.blink {
+    animation: blink 1s infinite; /* 1초 간격으로 무한 깜빡임 */
+    color: white;                 /* 글자색 흰색 유지 */
 }

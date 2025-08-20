@@ -57,7 +57,7 @@ public class ItemImgService {
             String oriImgName = itemImgFile.getOriginalFilename();
             // 새 파일 저장하고 저장된 파일명 받기
             String imgName = fileService.uploadFile(itemImgLocation, oriImgName, itemImgFile.getBytes());
-            String imgUrl = "/images/item" + imgName;
+            String imgUrl = "/images/item/" + imgName;
             savedItemImg.updateItemImg(oriImgName, imgName, imgUrl);
         }
     }

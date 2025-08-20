@@ -14,7 +14,8 @@
     <script>
         console.log("공통 스크립트");
     </script>
-
+    <meta name="_csrf" th:content="${_csrf.getToken()}">
+    <meta name="_csrf_header" th:content="${_csrf.getHeaderName()}">
 </head>
 <body>
     <!--header-->

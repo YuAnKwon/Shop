@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<th:block layout:fragment="css">
+    <style>
+        .mgb-15{
+            margin-bottom:15px;
+        }
+        .mgt-30{
+            margin-top:30px;
+        }
+        .mgt-50{
+            margin-top:50px;
+        }
+        .repImgDiv{
+            margin-right:15px;
+            height:auto;
+            width:50%;
+        }
+        .repImg{
+            width:90%;
+            height:auto;
+        }
+        .wd50{
+            height:auto;
+            width:50%;
+        }
+    </style>
+</th:block>
+
+<div layout:fragment="content">
+    <input type="hidden" id="itemId" th:value="${item.id}">
+    <div class="d-flex">
+        <div class="repImgDiv">
+            <img th:src="${item.itemImgDtoList[0].imgUrl}" class = "rounded repImg" th:alt="${item.itemNm}">
+        </div>
+        <div class="wd50">
+            <span th:if="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL}" class="badge bg-success mgb-15 fs-6", style="color: white">
+                판매중
+            </span>
+            <span th:unless="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL}" class="badge mgb-15 blink fs-6" >
+                품절
+            </span>
+
+            <div class="h4" th:text="${item.itemNm}"></div>
+            <hr class="my-4">
+            <div class="text-right">
+                <div class="h4 text-success text-left">
+                    <input type="hidden" th:value="${item.price}" id="price" name="price">
+                    <span th:text="${item.price}"></span>원
+                </div>
+                <div class="input-group w-25">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">수량</span>
+                    </div>
+                    <input type="number" name="count" id="count" class="form-control" value="1" min="1">
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="text-right mgt-50" th:if="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL}">
+                <h5>결제 금액</h5>
+                <h3 name="totalPrice" id="totalPrice" class="font-weight-bold"></h3>
+            </div>
+            <br>
+            <div th:if="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL}" class="text-right">
+                <button type="button" class="btn btn-light border border-success btn-lg" onclick="addCart()">장바구니 담기</button>
+                <button type="button" class="btn btn-success btn-lg" style="color: white" onclick="order()">주문하기</button>
+            </div>
+            <div th:unless="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL}" class="text-right">
+                <button type="button" class="btn btn-danger btn-lg blink">품절</button>
+            </div>
+
+        </div>
+    </div>
+    <div class="jumbotron jumbotron-fluid mgt-30">
+        <div class="container">
+            <h4 class="display-5">상품 상세 설명</h4>
+            <hr class="my-4">
+            <p class="lead" th:text="${item.itemDetail}"></p>
+        </div>
+    </div>
+    <div th:each="itemImg : ${item.itemImgDtoList}" class="text-center">
+        <img th:if="${not #strings.isEmpty(itemImg.imgUrl)}" th:src="${itemImg.imgUrl}" class="rounded mgb-15" width="800">
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script>
+        $(document).ready(()=>{
+            calculateTotalPrice();
+            $("#count").on("input",()=>{
+                calculateTotalPrice();
+            });
+        });
+
+        function calculateTotalPrice(){
+            var price = parseInt($("#price").val());
+            var count = parseInt($("#count").val());
+
+            // 음수 또는 0일 경우 최소 1로 설정
+            if(count < 1){
+                count = 1;
+                $("#count").val(count);
+            }
+
+            var totalPrice = price * count;
+            $("#totalPrice").html(totalPrice + '원');
+        }
+
+
+        // "주문하기" 버튼 클릭 시 실행될 함수
+        function order(){
+
+            // Spring Security를 사용할 경우, POST 요청에는 CSRF 토큰이 필요.
+            // CSRF 토큰을 HTML meta 태그에서 조회
+            // token은 “실제 인증 값”. header는 “이 CSRF 토큰을 어디에 넣어야 하는지 알려주는 이름”
+            var token = $("meta[name='_csrf']").attr("content");
+            var header = $("meta[name='_csrf_header']").attr("content");
+
+            // 서버로 전달할 상품의 아이디와 주문 수량 데이터 생성
+            var paramData = {
+                itemId : $("#itemId").val(),
+                count : $("#count").val()
+            };
+
+            // JavaScript 객체를 JSON 문자열로 변환
+            var param = JSON.stringify(paramData);
+
+            // Ajax를 사용한 비동기 HTTP 요청
+            $.ajax({
+                url         : "/order",               // 요청을 보낼 URL
+                type        : "POST",                 // HTTP 메서드: POST
+                contentType : "application/json",     // 요청 데이터 타입: JSON
+                data        : param,                  // 서버로 전송할 데이터
+                beforeSend  : function(xhr){
+                    // 요청 전에 HTTP 헤더에 CSRF 토큰 설정
+                    xhr.setRequestHeader(header, token);
+                },
+                dataType    : "json",                 // 서버에서 받는 데이터 타입: JSON
+                cache       : false,                  // 캐시 사용 안 함
+                success     : function(result, status){
+                    // 주문 성공 시 실행
+                    alert("주문이 완료 되었습니다.");
+                    location.href='/';               // 메인 페이지로 이동
+                },
+                error       : function(jqXHR, status, error){
+                    // 주문 실패 시 실행
+                    if(jqXHR.status == '401'){      // 로그인하지 않은 상태라면
+                        alert('로그인 후 이용해주세요');
+                        location.href='/members/login'; // 로그인 페이지로 이동
+                    } else{
+                        // 기타 오류 메시지 출력
+                        alert(jqXHR.responseText);
+                    }
+                }
+             });
+        }
+    </script>
+</th:block>
+
+</html>

@@ -33,4 +33,30 @@ public class Order extends BaseEntity{
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus; //주문상태
+
+    private void addOrderItem(OrderItem orderItem){
+       this.orderItems.add(orderItem);
+       orderItem.setOrder(this); //Order 객체 자신
     }
+
+    public static Order createOrder(Member member, List<OrderItem> orderItemList){
+        Order order = new Order();
+        order.setMember(member);
+        for(OrderItem orderItem : orderItemList){
+            order.addOrderItem(orderItem);
+        }
+        order.setOrderStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    public int getTotalPrice(){
+        int totalPrice = 0;
+        for(OrderItem orderItem : orderItems){
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+    }
+}
+
+

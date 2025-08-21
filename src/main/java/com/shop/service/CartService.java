@@ -28,9 +28,9 @@ public class CartService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
-    private final OrderSevice orderSevice;
 
+    private final OrderSevice orderSevice;
+    private final CartItemRepository cartItemRepository;
     public Long addCart(CartItemDto cartItemDto, String email){
         // 1. Item 엔티티 조회.
         Item item = itemRepository.findById(cartItemDto.getItemId())

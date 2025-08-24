@@ -38,7 +38,8 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom{
 
     @Override
     public Long countOrder(String email) {
-        /* SELECT COUNT(*)
+        /* 
+        SELECT COUNT(*)
         FROM orders o
         INNER JOIN member m
         ON o.member_id = m.member_id

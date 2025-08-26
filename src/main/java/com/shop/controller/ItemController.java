@@ -28,7 +28,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    // 즉, 상품 등록 폼 페이지를 보여주기 위한 요청 핸들러
+    // 즉, 상품 등록 폼 페이지를 보여주기 위한 요청하는 핸들러
     @GetMapping("/admin/item/new")
     public String itemForm(Model model){
         model.addAttribute("itemFormDto", new ItemFormDto());

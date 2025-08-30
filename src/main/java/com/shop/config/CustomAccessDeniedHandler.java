@@ -14,7 +14,6 @@ AccessDeniedHandler란?
 - 인증된(Authenticated) 유저가 권한이 없는(Forbidden) 자원을 요청했을 때 동작
 - 인증은 되었지만 권한이 부족해서 접근 거부(Access Denied) 당했을 때 처리하는 클래스.
 */
-
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

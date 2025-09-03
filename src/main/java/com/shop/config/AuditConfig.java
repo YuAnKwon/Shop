@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class AuditConfig {
 
     //auditorAware을 스프링 빈으로 등록해서 JPA가 쓸 수 있도록 함.
+    
     @Bean
     public AuditorAware<String> auditorProvider(){
         return new AuditorAwareImpl();
